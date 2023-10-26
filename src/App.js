@@ -4,57 +4,66 @@ import React, { Component, useState, useEffect } from 'react';
 
 
 function App() {
+  const [civilizations, setCivilizations] = useState([]);
+  const [selectedCivilization, setSelectedCivilization] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
-const [civilizations, setCivilizations] = useState([]);
-const [selectedCivilization, setSelectedCivilization] = useState(null);
+  useEffect(() => {
+    fetch('https://www.aoepulse.com/api/v1/civ_win_rates/')
+      .then((response) => response.json())
+      .then((data) => setCivilizations(data.civs_list));
+  }, []);
 
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentCivilizations = civilizations.slice(indexOfFirstItem, indexOfLastItem);
 
-useEffect(() => {
-  fetch('https://www.aoepulse.com/api/v1/civ_win_rates/')
-    .then((response) => response.json())
-    .then((data) => setCivilizations(data.civs_list));
-}, []);
+  const totalPages = Math.ceil(civilizations.length / itemsPerPage);
 
-
-
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
 
   return (
-  <div>
-  <h2>Listado de Civilizaciones</h2>
-  <select
-    value={selectedCivilization ? selectedCivilization.name : ''}
-    onChange={(e) => {
-      const selectedName = e.target.value;
-      const selectedCiv = civilizations.find(
-        (civilization) => civilization.name === selectedName
-      );
-      setSelectedCivilization(selectedCiv);
-    }}
-  >
-    <option value="">Selecciona una civilización</option>
-    {civilizations.map((civilization) => (
-      <option key={civilization.name} value={civilization.name}>
-        {civilization.name}
-      </option>
-    ))}
-  </select>
-  <div>
-  <h2>Detalles de la Civilización</h2>
-  {selectedCivilization ? (
     <div>
-      <p>Nombre: {selectedCivilization.name}</p>
-      <p>Partidos jugados: {selectedCivilization.total}</p>
-      <p>Partidos ganados: {selectedCivilization.wins}</p>
-      <p>
-        Tasa de victoria:{' '}
-        {((selectedCivilization.wins / selectedCivilization.total) * 100).toFixed(2)}%
-      </p>
+      <h2>Listado de Civilizaciones</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Partidos jugados</th>
+            <th>Partidos ganados</th>
+            <th>Tasa de victoria</th>
+          </tr>
+        </thead>
+        <tbody>
+          {currentCivilizations.map((civilization) => (
+            <tr key={civilization.name}>
+              <td>{civilization.name}</td>
+              <td>{civilization.total}</td>
+              <td>{civilization.wins}</td>
+              <td>
+                {((civilization.wins / civilization.total) * 100).toFixed(2)}%
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      <div className="pagination">
+        {Array.from({ length: totalPages }, (_, index) => (
+          <button
+            key={index + 1}
+            onClick={() => handlePageChange(index + 1)}
+            className={currentPage === index + 1 ? "active" : ""}
+          >
+            {index + 1}
+          </button>
+        ))}
+      </div>
     </div>
-  ) : (
-    <div>Selecciona una civilización para ver los detalles.</div>
-  )}
-</div>
-</div>
   );
 }
 
