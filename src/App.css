@@ -36,3 +36,40 @@
     transform: rotate(360deg);
   }
 }
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh; /* Esto ajusta la altura al 100% del viewport */
+}
+
+/* Estilos adicionales para dar formato a la tabla y la paginación */
+table {
+  width: 80%; /* Ancho del 80% del contenedor */
+  border-collapse: collapse;
+}
+
+th, td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: center;
+}
+
+.pagination {
+  margin-top: 20px;
+}
+
+button {
+  margin: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+  background-color: #007BFF;
+  color: #fff;
+  border: none;
+}
+
+button.active {
+  background-color: #0056b3;
+}

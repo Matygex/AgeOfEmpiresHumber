@@ -26,7 +26,7 @@ function App() {
   };
 
   return (
-    <div>
+    <div className="app-container">
       <h2>Listado de Civilizaciones</h2>
 
       <table>
